@@ -1,6 +1,6 @@
 const db = {
-    Article: require('./article.js'),
-    Note: require('./note.js')
+    Article: require('./Article.js'),
+    Note: require('./Note.js')
 }
 
 module.exports = db
