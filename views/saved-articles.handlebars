@@ -1,0 +1,15 @@
+<div class="container">
+    {{#each articles}}
+    <div class="row">
+        <div class="col-sm">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{title}} </h5>
+                    <p class="card-text">{{link}}</p>
+                    <div><a href="#" class="btn btn-primary btn-open-note">Open Note</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>

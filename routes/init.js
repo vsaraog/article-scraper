@@ -5,14 +5,18 @@ const md5 = require('md5')
 
 var db = require("../models");
 
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/articleScraperdb";
 
+// Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/articleScraperdb", { useNewUrlParser: true });
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
+
 let scrappedArticles = []
 
 function routePaths(app) {
     app.get('/', (req, res) => {
-        res.json("In default route")
+        res.render('index')
     })
 
     app.get('/scrape', (req, res) => {
@@ -34,14 +38,15 @@ function routePaths(app) {
                 scrappedArticles[md5(link)] = {title: title, link: `http${link}`}
                 results.push({title: title, link: `http${link}`, urlMd5:md5(link)})
             })
-            res.json(results)
+            const arData = {articles: []}
+            arData.articles = results
+            res.render('index', arData)
             console.log(scrappedArticles)
         }
         })
     })
 
     app.post('/save-article', (req, res) => {
-        // console.log(req)
         console.log('REQ BODY', req.body)
         const article = scrappedArticles[req.body.urlMd5]
         if (article) {
@@ -59,10 +64,13 @@ function routePaths(app) {
     }
     })
 
-    app.get('/saved-article', (req, res) => {
+    app.get('/saved-articles', (req, res) => {
         db.Article.find()
         .then(data => {
-            res.json(data)
+            // console.log(data)
+            const articleData = {articles: []}
+            articleData.articles = data
+            res.render('saved-articles', articleData)
         })
         .catch(err => {
             res.json(err)
